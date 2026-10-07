@@ -1,0 +1,37 @@
+{
+  "name": "jarvis",
+  "version": "1.0.0",
+  "description": "Local Agentic AI Assistant powered by Ollama and Vercel AI SDK 7",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "ollama",
+    "assistant"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "ai": "^7.0.128",
+    "dotenv": "^18.0.5",
+    "firecrawl": "^4.44.1",
+    "ollama-ai-provider-v2": "^4.0.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}
