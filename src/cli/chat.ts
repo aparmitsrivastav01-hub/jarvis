@@ -77,16 +77,36 @@ async function chatLoop() {
 
     try {
       console.log('Jarvis: >');
-      
+
       const result = await jarvisAgent.stream({
         prompt: trimmedInput,
       });
 
-      let fullResponse = '';
-      
-      for await (const chunk of result.textStream) {
-        process.stdout.write(chunk);
-        fullResponse += chunk;
+      const fullStream = (
+        result as unknown as {
+          fullStream?: AsyncIterable<{
+            type?: string;
+            toolName?: string;
+            text?: string;
+            textDelta?: string;
+          }>;
+        }
+      ).fullStream;
+
+      if (fullStream) {
+        for await (const part of fullStream) {
+          if (part.type === 'tool-call' && part.toolName) {
+            console.log(formatToolCall(part.toolName));
+          }
+
+          if (part.type === 'text-delta') {
+            process.stdout.write(part.text ?? part.textDelta ?? '');
+          }
+        }
+      } else {
+        for await (const chunk of result.textStream) {
+          process.stdout.write(chunk);
+        }
       }
       
       console.log('');

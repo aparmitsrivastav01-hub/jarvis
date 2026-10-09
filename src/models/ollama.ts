@@ -3,8 +3,13 @@ import { createOllama } from 'ollama-ai-provider-v2';
 
 dotenv.config();
 
-const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'qwen3:8b';
+const rawHost =
+  process.env.OLLAMA_BASE_URL ||
+  process.env.OLLAMA_HOST ||
+  'http://localhost:11434';
+
+const OLLAMA_HOST = rawHost.replace(/\/api\/?$/, '');
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'qwen2.5:7b';
 
 const ollamaProvider = createOllama({
   baseURL: `${OLLAMA_HOST}/api`,

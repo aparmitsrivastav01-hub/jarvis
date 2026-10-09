@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx src/index.ts",
+    "voice": "tsx src/cli/voice.ts",
     "build": "tsc",
     "test": "vitest",
     "test:run": "vitest run"
@@ -22,6 +23,7 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
+    "@tiny-fish/sdk": "^0.8.0",
     "ai": "^7.0.128",
     "dotenv": "^18.0.5",
     "firecrawl": "^4.44.1",

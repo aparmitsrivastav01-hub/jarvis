@@ -53,9 +53,21 @@ describe('Jarvis Agent', () => {
         inputSchema: z.object({}),
         execute: async () => ({}),
       },
+      webResearch: {
+        description: 'Research the web',
+        inputSchema: z.object({}),
+        execute: async () => ({}),
+      },
+      webAgent: {
+        description: 'Perform live browser actions',
+        inputSchema: z.object({}),
+        execute: async () => ({}),
+      },
     };
 
     expect(tools).toHaveProperty('getCurrentTime');
+    expect(tools).toHaveProperty('webResearch');
+    expect(tools).toHaveProperty('webAgent');
     expect(tools.getCurrentTime).toHaveProperty('description');
     expect(tools.getCurrentTime).toHaveProperty('inputSchema');
     expect(tools.getCurrentTime).toHaveProperty('execute');

@@ -1,12 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+const searchMock = vi.hoisted(() => vi.fn());
+
 vi.mock('firecrawl', () => ({
   Firecrawl: class {
-    constructor() {
-      return {
-        search: vi.fn(),
-      };
-    }
+    search = searchMock;
   },
 }));
 
@@ -34,5 +32,34 @@ describe('webResearch tool', () => {
     const schema = webResearch.inputSchema;
     expect(schema).toBeDefined();
     // The schema should have query as required and maxResults as optional
+  });
+
+  it('should still return normalized Firecrawl research results', async () => {
+    process.env.FIRECRAWL_API_KEY = 'firecrawl-test-key';
+    searchMock.mockResolvedValue({
+      web: [
+        {
+          title: 'Firecrawl',
+          url: 'https://www.firecrawl.dev',
+          description: 'Web data API for AI agents',
+          markdown: 'Firecrawl crawls and converts websites into LLM-ready data.',
+        },
+      ],
+      news: [],
+    });
+
+    const result = (await webResearch.execute(
+      { query: 'What does Firecrawl do?', maxResults: 3 },
+      { toolCallId: 'test-2', messages: [], context: {} }
+    )) as {
+      query: string;
+      count: number;
+      results: Array<{ title: string; url: string; content: string }>;
+    };
+
+    expect(result.count).toBe(1);
+    expect(result.results[0]?.url).toBe('https://www.firecrawl.dev');
+    expect(result.results[0]?.content).toContain('LLM-ready');
+    expect(searchMock).toHaveBeenCalled();
   });
 });
