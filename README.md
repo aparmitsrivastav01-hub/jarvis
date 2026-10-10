@@ -17,9 +17,9 @@ Ollama
  ↓
 Tool Loop
  ↓
-Tools (getCurrentTime, webResearch)
+Tools (getCurrentTime, webResearch, webAgent, speechToText, textToSpeech)
  ↓
-Ollama / Firecrawl
+Ollama / Firecrawl / TinyFish / Gnani
  ↓
 Response
 ```
@@ -29,6 +29,8 @@ Response
 - **Node.js**: 22.0.0 or higher
 - **Ollama**: Running locally on your machine
 - **Firecrawl API Key**: For web research (optional)
+- **TinyFish API Key**: For browser automation (optional)
+- **Gnani API Key**: For speech-to-text and text-to-speech (optional)
 
 ## Installation
 
@@ -64,6 +66,8 @@ Edit `.env` to configure your settings:
 OLLAMA_HOST=http://localhost:11434/api
 OLLAMA_MODEL=qwen2.5:7b
 FIRECRAWL_API_KEY=your_api_key_here
+TINYFISH_API_KEY=your_api_key_here
+GNANI_API_KEY=your_api_key_here
 ```
 
 ### 5. Firecrawl Setup (Optional)
@@ -75,6 +79,26 @@ For web research capabilities:
 3. Add `FIRECRAWL_API_KEY=your_api_key_here` to your `.env` file
 
 Without Firecrawl, Jarvis will still work but won't be able to perform web research.
+
+### 6. TinyFish Setup (Optional)
+
+For browser automation capabilities:
+
+1. Create a TinyFish account at [agent.tinyfish.ai/api-keys](https://agent.tinyfish.ai/api-keys)
+2. Obtain an API key
+3. Add `TINYFISH_API_KEY=your_api_key_here` to your `.env` file
+
+Without TinyFish, Jarvis will still work but won't be able to perform live browser actions.
+
+### 7. Gnani Setup (Optional)
+
+For speech-to-text and text-to-speech capabilities:
+
+1. Create a Gnani account at [docs.gnani.ai](https://docs.gnani.ai)
+2. Obtain an API key
+3. Add `GNANI_API_KEY=your_api_key_here` to your `.env` file
+
+Without Gnani, Jarvis will still work but won't be able to transcribe audio or synthesize speech.
 
 ## Usage
 
@@ -120,7 +144,9 @@ jarvis/
 │   ├── tools/
 │   │   ├── index.ts           # Tool registry
 │   │   ├── get-current-time.ts # Time tool
-│   │   └── firecrawl.ts       # Web research tool
+│   │   ├── firecrawl.ts       # Web research tool
+│   │   ├── tinyfish.ts        # Browser automation tool
+│   │   └── gnani.ts          # STT/TTS tools
 │   │
 │   ├── cli/
 │   │   └── chat.ts            # CLI interface
@@ -130,7 +156,9 @@ jarvis/
 ├── tests/
 │   ├── tools.test.ts          # Tool tests
 │   ├── agent.test.ts          # Agent tests
-│   └── firecrawl.test.ts      # Firecrawl tests
+│   ├── firecrawl.test.ts      # Firecrawl tests
+│   ├── tinyfish.test.ts       # TinyFish tests
+│   └── gnani.test.ts          # Gnani tests
 │
 ├── .env.example               # Environment template
 ├── .gitignore
@@ -159,7 +187,25 @@ Tools are registered in `src/tools/index.ts` and used by the agent in `src/agent
 - **Purpose**: Research public web pages for current information
 - **Usage**: Jarvis automatically uses this when web information is needed
 - **Requires**: FIRECRAWL_API_KEY
-- **Example**: "What are the latest Vercel AI SDK features?"
+- **Example": "What are the latest Vercel AI SDK features?"
+
+#### webAgent
+- **Purpose**: Perform live browser automation and interactions
+- **Usage**: Jarvis uses this when you need to navigate, interact with, or perform actions on live websites
+- **Requires**: TINYFISH_API_KEY
+- **Example**: "Go to tinyfish.ai and find the pricing page"
+
+#### speechToText
+- **Purpose**: Transcribe audio to text
+- **Usage**: Jarvis uses this when you provide audio input or need speech transcription
+- **Requires**: GNANI_API_KEY
+- **Example**: "Transcribe this audio file"
+
+#### textToSpeech
+- **Purpose**: Convert text to speech
+- **Usage**: Jarvis uses this when you need audio output or text-to-speech conversion
+- **Requires**: GNANI_API_KEY
+- **Example": "Speak this text in Hindi"
 
 ### Adding a New Tool
 
@@ -189,6 +235,9 @@ import { myTool } from './my-tool.js';
 export const tools = {
   getCurrentTime,
   webResearch,
+  webAgent,
+  speechToText,
+  textToSpeech,
   myTool,
 };
 ```
@@ -200,8 +249,8 @@ export const tools = {
 - **No arbitrary code execution**: Tools must have explicit schemas
 - **No generic shell access**: Dangerous tools require explicit implementation
 - **Future approval system**: Architecture supports adding tool approval workflows
-- **API key protection**: FIRECRAWL_API_KEY is never exposed to the model
-- **Web access only**: Firecrawl only accesses public web content through its API
+- **API key protection**: All API keys (FIRECRAWL_API_KEY, TINYFISH_API_KEY, GNANI_API_KEY) are never exposed to the model
+- **Web access only**: Firecrawl and TinyFish only access public web content through their APIs
 - never trust model-generated executable code without validation
 
 ## Roadmap
@@ -212,17 +261,23 @@ export const tools = {
 - ✅ CLI interface
 - ✅ Streaming responses
 
-### Phase 2 ✅ (Current)
+### Phase 2 ✅
 - ✅ Firecrawl web research
 - ✅ webResearch tool
 - ✅ Context management and truncation
 - ✅ Error handling for API failures
 
-### Phase 3
-- TinyFish browser automation
+### Phase 3 ✅
+- ✅ TinyFish browser automation
+- ✅ webAgent tool
+- ✅ Live browser interaction
+- ✅ URL extraction and result normalization
 
-### Phase 4
-- Gnani STT/TTS integration
+### Phase 4 ✅ (Current)
+- ✅ Gnani STT/TTS integration
+- ✅ speechToText tool
+- ✅ textToSpeech tool
+- ✅ REST API integration for audio
 
 ### Phase 5
 - Local computer tools (filesystem, terminal)
@@ -245,6 +300,8 @@ export const tools = {
 - **Ollama**: Local LLM provider
 - **ollama-ai-provider-v2**: AI SDK Ollama integration
 - **Firecrawl**: Web research API
+- **TinyFish**: Browser automation API
+- **Gnani**: Speech-to-text and text-to-speech API
 - **Zod**: Schema validation
 - **dotenv**: Environment configuration
 - **Vitest**: Testing framework
