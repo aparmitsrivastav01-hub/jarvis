@@ -28,6 +28,7 @@
     "dotenv": "^18.0.5",
     "firecrawl": "^4.44.1",
     "ollama-ai-provider-v2": "^4.0.1",
+    "play-sound": "^1.1.6",
     "zod": "^4.6.5"
   },
   "devDependencies": {
